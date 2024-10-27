@@ -234,27 +234,25 @@ export class IntuiTaskView extends ItemView {
 		
 		tasks.forEach((task, index) => {
 			const listItem = taskList.createEl('li', { cls: 'intui-inbox-item' });
-			const taskContent = listItem.createEl('div', { cls: 'intui-inbox-item-content' });
 			
-			// Extract priority and description
-			const { priority, description } = this.extractPriorityAndDescription(task);
-			
-			// First line: checkbox and task description
-			const taskDescriptionEl = taskContent.createEl('div', { cls: 'intui-inbox-item-description' });
+			// First line: checkbox, task description, and action button
+			const taskDescriptionEl = listItem.createEl('div', { cls: 'intui-inbox-item-description' });
 			const checkbox = taskDescriptionEl.createEl('input', { type: 'checkbox' });
 			checkbox.checked = task.startsWith('- [x]');
 			checkbox.addEventListener('change', () => this.updateTaskCompletion(file, index, checkbox.checked));
 			
-			const descriptionSpan = taskDescriptionEl.createEl('span', { text: description });
+			const { priority, description } = this.extractPriorityAndDescription(task);
+			
+			const descriptionSpan = taskDescriptionEl.createEl('span', { text: description, cls: 'intui-inbox-item-description-text' });
 			descriptionSpan.setAttribute('contenteditable', 'true');
 			descriptionSpan.addEventListener('blur', () => this.updateTaskDescription(file, index, descriptionSpan.textContent));
 			
-			// Second line: task properties
-			const taskProperties = taskContent.createEl('div', { cls: 'intui-inbox-item-properties' });
-			this.renderTaskProperties(taskProperties, task, priority);
-			
-			const actionButton = listItem.createEl('button', { cls: 'intui-inbox-action', text: '•••' });
+			const actionButton = taskDescriptionEl.createEl('button', { cls: 'intui-inbox-action', text: '•••' });
 			actionButton.addEventListener('click', (e) => this.showTaskActions(e, task));
+			
+			// Second line: task properties
+			const taskProperties = listItem.createEl('div', { cls: 'intui-inbox-item-properties' });
+			this.renderTaskProperties(taskProperties, task, priority);
 		});
 
 		// Re-add the "Add task" button

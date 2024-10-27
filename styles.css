@@ -79,6 +79,15 @@ If your plugin does not need CSS, delete this file.
     display: none;
 }
 
+ul.intui-inbox-list {
+    padding-left: 0px;
+}
+
+li.intui-inbox-item {
+    margin-bottom: 10px;
+}
+
+
 .intui-task-main-container {
     flex-grow: 1;
     transition: margin-left 0.3s ease;
@@ -162,6 +171,10 @@ If your plugin does not need CSS, delete this file.
     display: none;
 }
 
+.intui-task-sidebar.collapsed .intui-task-sidebar-icon {
+    margin-right: 0;
+}
+
 .intui-task-calendar-container,
 .intui-task-now-container,
 .intui-task-inbox-container {
@@ -176,24 +189,38 @@ If your plugin does not need CSS, delete this file.
 }
 
 .intui-task-inbox-item {
-    display: flex;
-    align-items: flex-start;
     padding: 10px;
     border-bottom: 1px solid var(--background-modifier-border);
+    position: relative;
 }
 
 .intui-task-inbox-item-content {
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .intui-task-inbox-item-description {
     display: flex;
     align-items: center;
+    position: relative;
     margin-bottom: 5px;
 }
 
 .intui-task-inbox-item-description input[type="checkbox"] {
     margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.intui-task-inbox-item-description-wrapper {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    position: relative;
+}
+
+.intui-task-inbox-item-description-text {
+    flex-grow: 1;
+    padding-right: 30px; /* Make space for the action button */
 }
 
 .intui-task-inbox-item-properties {
@@ -201,6 +228,7 @@ If your plugin does not need CSS, delete this file.
     flex-wrap: wrap;
     font-size: 0.9em;
     color: var(--text-muted);
+    margin-left: 25px; /* Align with the description text */
 }
 
 .intui-task-inbox-item-property {
@@ -218,7 +246,22 @@ If your plugin does not need CSS, delete this file.
     cursor: pointer;
     font-size: 16px;
     color: var(--text-muted);
-    align-self: flex-start;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.intui-task-inbox-item:hover .intui-task-inbox-action {
+    opacity: 1;
 }
 
 .intui-task-add-task {
@@ -432,6 +475,14 @@ If your plugin does not need CSS, delete this file.
     height: 100%;
 }
 
+.intui-inbox-list {
+    list-style-type: none;
+}
+
+button.intui-inbox-action {
+    float: right;
+}
+
 /* Add these styles if they're not already present */
 
 .intui-sidebar {
@@ -483,3 +534,4 @@ If your plugin does not need CSS, delete this file.
     display: flex;
     height: 100%;
 }
+
