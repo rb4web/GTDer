@@ -3,7 +3,7 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { IntuiTaskPluginSettings } from './main'; // Update this import
+import { IntuiTaskPluginSettings } from '../main'; // Update this import
 
 export class IntuiTaskView extends ItemView {
 	calendar: Calendar;
