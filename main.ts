@@ -1,15 +1,11 @@
 import { App, Plugin, PluginSettingTab, Setting, WorkspaceLeaf, TFile } from 'obsidian';
 import { IntuiTaskView } from './src/IntuiTaskView';
 import './styles.css';
+import { IntuiTaskPluginSettings } from './src/types/types';
 
 // Remember to rename these classes and interfaces!
 
-export interface IntuiTaskPluginSettings {
-	projectsDirectory: string;
-	tasksDirectory: string;
-	eventsDirectory: string;
-	inboxTasksPath: string;
-}
+
 
 const DEFAULT_SETTINGS: IntuiTaskPluginSettings = {
 	projectsDirectory: 'Projects',
@@ -26,6 +22,9 @@ export default class IntuiTaskPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		// Add this line to register the settings tab
+		this.addSettingTab(new IntuiTaskSettingTab(this.app, this));
 
 		this.addRibbonIcon('calendar-with-checkmark', 'Intui Task', () => {
 			this.activateView();
