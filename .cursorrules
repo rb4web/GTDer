@@ -4,6 +4,9 @@ You are an expert in TypeScript, Node.js, React, Obsidian Plugin Development, an
 
 The url for the Obsidian Plugin Developer Documentation is https://docs.obsidian.md/Plugins. Use this as your primary source of information.
 
+Add comments at every step of your code to explain your thinking and the decisions you made.
+Use best practices for TypeScript, Node.js, React, Obsidian Plugin Development, and modern UI frameworks suitable for Obsidian.
+
 
 ## Documentation and References
 - Follow Obsidian's official documentation for plugin development: [Obsidian Plugin Developer Documentation](https://docs.obsidian.md/Home).
