@@ -6,3 +6,4 @@ export interface IntuiTaskPluginSettings {
 }
 
 export type TaskPriority = 'highest' | 'high' | 'medium' | 'low' | 'lowest' | 'normal';
+export type TaskStatus = "todo" | "done" | "inProgress" | "cancelled";

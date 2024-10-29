@@ -8,7 +8,7 @@ import { InboxView } from './components/inbox/InboxView';
 
 export class IntuiTaskView extends ItemView {
 	calendar: Calendar;
-	currentView: 'inbox' | 'now' | 'plan' = 'plan';
+	currentView: 'inbox' | 'now' | 'plan' = 'inbox';
 	sidebarContainer: HTMLElement;
 	mainContainer: HTMLElement;
 	calendarContainer: HTMLElement;
