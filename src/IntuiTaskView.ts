@@ -3,7 +3,8 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { IntuiTaskPluginSettings } from '../main'; // Update this import
+import { IntuiTaskPluginSettings } from './types/types';
+import { InboxView } from './components/inbox/InboxView';
 
 export class IntuiTaskView extends ItemView {
 	calendar: Calendar;
@@ -12,9 +13,8 @@ export class IntuiTaskView extends ItemView {
 	mainContainer: HTMLElement;
 	calendarContainer: HTMLElement;
 	nowContainer: HTMLElement;
-	inboxContainer: HTMLElement;
+	inboxView: InboxView;
 	settings: IntuiTaskPluginSettings;
-	showCompletedTasks: boolean = false;
 
 	constructor(leaf: WorkspaceLeaf, settings: IntuiTaskPluginSettings) {
 		super(leaf);
@@ -85,11 +85,11 @@ export class IntuiTaskView extends ItemView {
 
 		this.calendarContainer = this.mainContainer.createEl('div', { cls: 'intui-calendar-container' });
 		this.nowContainer = this.mainContainer.createEl('div', { cls: 'intui-now-container' });
-		this.inboxContainer = this.mainContainer.createEl('div', { cls: 'intui-inbox-container' });
+		
+		this.inboxView = new InboxView(this.mainContainer, this.settings, this.app);
 
 		this.renderCalendarView();
 		this.renderNowView();
-		this.renderInboxView();
 
 		this.switchView(this.currentView);
 	}
@@ -97,11 +97,13 @@ export class IntuiTaskView extends ItemView {
 	switchView(view: 'inbox' | 'now' | 'plan') {
 		this.currentView = view;
 
-		[this.inboxContainer, this.nowContainer, this.calendarContainer].forEach(container => container.hide());
+		this.calendarContainer.hide();
+		this.nowContainer.hide();
+		this.inboxView.hide();
 
 		switch (view) {
 			case 'inbox':
-				this.inboxContainer.show();
+				this.inboxView.show();
 				break;
 			case 'now':
 				this.nowContainer.show();
@@ -146,261 +148,6 @@ export class IntuiTaskView extends ItemView {
 		this.nowContainer.createEl('p', { text: 'This view will show the currently scheduled task.' });
 	}
 
-	renderInboxView() {
-		const inboxTasksFile = this.app.vault.getAbstractFileByPath(this.settings.inboxTasksPath);
-		if (inboxTasksFile instanceof TFile) {
-			this.renderInboxHeader();
-			this.renderInboxTasks(inboxTasksFile);
-			
-			// Set up a file watcher to update the view when the file changes
-			this.registerEvent(
-				this.app.vault.on('modify', (file) => {
-					if (file === inboxTasksFile) {
-						this.renderInboxTasks(inboxTasksFile);
-					}
-				})
-			);
-		} else {
-			this.inboxContainer.empty();
-			this.inboxContainer.createEl('p', { text: 'Inbox tasks file not found. Please check your settings.' });
-		}
-	}
-
-	private renderInboxHeader() {
-		const header = this.inboxContainer.createEl('div', { cls: 'intui-inbox-header' });
-		header.createEl('h2', { text: 'Inbox' });
-
-		const settingsButton = header.createEl('button', { cls: 'intui-inbox-settings-button', text: '⚙️' });
-		settingsButton.addEventListener('click', (event) => {
-			console.log('Settings button clicked');
-			event.preventDefault();
-			event.stopPropagation();
-			this.showSettingsMenu(event);
-		});
-	}
-
-	private showSettingsMenu(event: MouseEvent) {
-		console.log('showSettingsMenu called');
-		try {
-			const menu = new Menu();
-
-			menu.addItem((item) => {
-				item.setTitle('Completed tasks');
-				item.onClick((e) => {
-					e.preventDefault();
-					e.stopPropagation();
-				});
-
-				// Manually create and append the toggle
-				const toggleContainer = item.dom.createDiv({ cls: 'intui-menu-toggle-container' });
-				const toggle = new ToggleComponent(toggleContainer);
-				toggle.setValue(this.showCompletedTasks);
-				toggle.onChange(async (value) => {
-					console.log('Toggle changed:', value);
-					this.showCompletedTasks = value;
-					new Notice(`Show completed tasks: ${this.showCompletedTasks}`);
-					const inboxTasksFile = this.app.vault.getAbstractFileByPath(this.settings.inboxTasksPath);
-					if (inboxTasksFile instanceof TFile) {
-						await this.renderInboxTasks(inboxTasksFile);
-					}
-				});
-
-				// Append the toggle container to the menu item
-				item.dom.appendChild(toggleContainer);
-			});
-
-			menu.showAtMouseEvent(event);
-			new Notice('Settings menu opened');
-		} catch (error) {
-			console.error('Error in showSettingsMenu:', error);
-			new Notice('Error opening settings menu');
-		}
-	}
-
-	private async renderInboxTasks(file: TFile) {
-		const content = await this.app.vault.read(file);
-		
-		// Clear existing content
-		this.inboxContainer.empty();
-		
-		// Re-render the header
-		this.renderInboxHeader();
-		
-		const taskList = this.inboxContainer.createEl('ul', { cls: 'intui-inbox-list' });
-		const tasks = content.split('\n').filter(line => {
-			const trimmedLine = line.trim();
-			return trimmedLine.startsWith('- [ ]') || (this.showCompletedTasks && trimmedLine.startsWith('- [x]'));
-		});
-		
-		tasks.forEach((task, index) => {
-			const listItem = taskList.createEl('li', { cls: 'intui-inbox-item' });
-			
-			// First line: checkbox, task description, and action button
-			const taskDescriptionEl = listItem.createEl('div', { cls: 'intui-inbox-item-description' });
-			const checkbox = taskDescriptionEl.createEl('input', { type: 'checkbox' });
-			checkbox.checked = task.startsWith('- [x]');
-			checkbox.addEventListener('change', () => this.updateTaskCompletion(file, index, checkbox.checked));
-			
-			const { priority, description } = this.extractPriorityAndDescription(task);
-			
-			const descriptionSpan = taskDescriptionEl.createEl('span', { text: description, cls: 'intui-inbox-item-description-text' });
-			descriptionSpan.setAttribute('contenteditable', 'true');
-			descriptionSpan.addEventListener('blur', () => this.updateTaskDescription(file, index, descriptionSpan.textContent));
-			
-			const actionButton = taskDescriptionEl.createEl('button', { cls: 'intui-inbox-action', text: '•••' });
-			actionButton.addEventListener('click', (e) => this.showTaskActions(e, task));
-			
-			// Second line: task properties
-			const taskProperties = listItem.createEl('div', { cls: 'intui-inbox-item-properties' });
-			this.renderTaskProperties(taskProperties, task, priority);
-		});
-
-		// Re-add the "Add task" button
-		const addTaskButton = this.inboxContainer.createEl('button', { cls: 'intui-add-task', text: '+ Add task' });
-		addTaskButton.addEventListener('click', () => this.openAddTaskModal());
-	}
-
-	private extractPriorityAndDescription(task: string): { priority: string, description: string } {
-		const priorityMap = {
-			'🔺': 'highest',
-			'⏫': 'high',
-			'🔼': 'medium',
-			'🔽': 'low',
-			'⏬': 'lowest'
-		};
-		
-		let priority = '';
-		let description = task.substring(5).trim(); // Remove '- [ ] ' from the beginning
-
-		for (const [emoji, value] of Object.entries(priorityMap)) {
-			if (description.includes(emoji)) {
-				priority = value;
-				description = description.replace(emoji, '').trim();
-				break;
-			}
-		}
-
-		return { priority, description };
-	}
-
-	private renderTaskProperties(container: HTMLElement, task: string, priority: string) {
-		console.log("Task priority:", priority); // Debug log
-
-		// Always display priority, defaulting to 'normal' if not set
-		const priorityText = priority ? this.getPriorityText(priority) : 'Normal';
-		const priorityElement = container.createEl('span', {
-			cls: 'intui-inbox-item-property intui-inbox-item-priority',
-			text: `Priority: ${priorityText}`,
-			attr: { 'data-priority': priority || 'normal' }
-		});
-		priorityElement.addEventListener('click', () => this.editTaskProperty(task, 'priority', priority || 'normal'));
-
-		// Display other properties
-		const properties = task.match(/\[([^\]]+)\]/g) || [];
-		properties.forEach(prop => {
-			const [key, value] = prop.slice(1, -1).split(':');
-			if (key && value) {
-				const propElement = container.createEl('span', { 
-					cls: 'intui-inbox-item-property', 
-					text: `${key}: ${value.trim()}` 
-				});
-				propElement.addEventListener('click', () => this.editTaskProperty(task, key, value.trim()));
-			}
-		});
-	}
-
-	private getPriorityText(priority: string): string {
-		switch (priority) {
-			case 'highest': return 'Highest';
-			case 'high': return 'High';
-			case 'medium': return 'Medium';
-			case 'low': return 'Low';
-			case 'lowest': return 'Lowest';
-			case 'normal':
-			case '': return 'Normal';
-			default: return 'Unknown';
-		}
-	}
-
-	private async editTaskProperty(file: TFile, taskIndex: number, key: string, currentValue: string) {
-		const newValue = await this.promptForNewValue(key, currentValue);
-		if (newValue === null) return; // User cancelled the edit
-
-		const content = await this.app.vault.read(file);
-		const lines = content.split('\n');
-		const taskLine = lines[taskIndex];
-
-		let updatedLine = taskLine;
-		const propertyRegex = new RegExp(`\\[${key}:.*?\\]`);
-		
-		if (key === 'priority') {
-			// Handle priority specially
-			updatedLine = this.updatePriorityInTaskLine(updatedLine, newValue);
-		} else if (propertyRegex.test(taskLine)) {
-			// Update existing property
-			updatedLine = updatedLine.replace(propertyRegex, `[${key}:${newValue}]`);
-		} else {
-			// Add new property
-			updatedLine += ` [${key}:${newValue}]`;
-		}
-
-		lines[taskIndex] = updatedLine;
-		await this.app.vault.modify(file, lines.join('\n'));
-		
-		// Re-render the inbox tasks to reflect the changes
-		this.renderInboxTasks(file);
-	}
-
-	private updatePriorityInTaskLine(taskLine: string, newPriority: string): string {
-		const priorityEmoji = this.getPriorityEmoji(newPriority);
-		const existingPriorityRegex = /[🔺⏫🔼🔽⏬️]/;
-		
-		if (existingPriorityRegex.test(taskLine)) {
-			return taskLine.replace(existingPriorityRegex, priorityEmoji);
-		} else {
-			return `${taskLine} ${priorityEmoji}`;
-		}
-	}
-
-	private getPriorityEmoji(priority: string): string {
-		switch (priority.toLowerCase()) {
-			case 'highest': return '🔺';
-			case 'high': return '⏫';
-			case 'medium': return '🔼';
-			case 'low': return '🔽';
-			case 'lowest': return '⏬️';
-			default: return '';
-		}
-	}
-
-	private async promptForNewValue(key: string, currentValue: string): Promise<string | null> {
-		return new Promise((resolve) => {
-			const modal = new EditPropertyModal(this.app, key, currentValue, (result) => {
-				resolve(result);
-			});
-			modal.open();
-		});
-	}
-
-	private showTaskActions(event: MouseEvent, task: string) {
-		// Implement task action menu (e.g., edit, delete, move)
-		console.log('Show actions for task:', task);
-	}
-
-	private openAddTaskModal() {
-		new AddTaskModal(this.app, this).open();
-	}
-
-	private async addNewTask(taskDescription: string) {
-		const inboxTasksFile = this.app.vault.getAbstractFileByPath(this.settings.inboxTasksPath);
-		if (inboxTasksFile instanceof TFile) {
-			const currentContent = await this.app.vault.read(inboxTasksFile);
-			const newContent = currentContent + `\n- [ ] ${taskDescription}`;
-			await this.app.vault.modify(inboxTasksFile, newContent);
-			// The file watcher will trigger the re-render of the Inbox View
-		}
-	}
-
 	async onClose() {
 		if (this.calendar) {
 			this.calendar.destroy();
@@ -419,33 +166,6 @@ export class IntuiTaskView extends ItemView {
 	handleEventClick(clickInfo: any) {
 		console.log('Event clicked:', clickInfo);
 		// TODO: Implement event/task editing logic
-	}
-
-	private async updateTaskCompletion(file: TFile, taskIndex: number, isCompleted: boolean) {
-		const content = await this.app.vault.read(file);
-		const lines = content.split('\n');
-		const taskLine = lines[taskIndex];
-		
-		if (isCompleted) {
-			lines[taskIndex] = taskLine.replace('- [ ]', '- [x]');
-		} else {
-			lines[taskIndex] = taskLine.replace('- [x]', '- [ ]');
-		}
-
-		await this.app.vault.modify(file, lines.join('\n'));
-	}
-
-	private async updateTaskDescription(file: TFile, taskIndex: number, newDescription: string) {
-		const content = await this.app.vault.read(file);
-		const lines = content.split('\n');
-		const taskLine = lines[taskIndex];
-		
-		const checkboxPart = taskLine.substring(0, 5); // '- [ ]' or '- [x]'
-		const propertiesPart = taskLine.match(/\[.*\]/g)?.join(' ') || '';
-		
-		lines[taskIndex] = `${checkboxPart} ${newDescription} ${propertiesPart}`.trim();
-
-		await this.app.vault.modify(file, lines.join('\n'));
 	}
 }
 
