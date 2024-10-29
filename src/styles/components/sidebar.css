@@ -1,33 +1,23 @@
-.intui-task-sidebar {
-    position: relative;
-    width: 200px;
-    background-color: var(--background-secondary);
-    transition: width 0.3s ease;
-    overflow: hidden;
-    border-right: 1px solid var(--background-modifier-border);
-}
+/* 
 
 .intui-task-sidebar.collapsed {
-    width: 40px;
+    width: 50px;
 }
 
 .intui-task-sidebar.collapsed .intui-task-sidebar-buttons {
     display: none;
 }
 
-.intui-task-sidebar-toggle {
-    width: 40px;
-    height: 40px;
-    padding: 0;
+.intui-sidebar-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
     background: none;
     border: none;
-    color: var(--text-normal);
     cursor: pointer;
-    font-size: 18px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    display: block;
+
 }
 
 .intui-task-sidebar-buttons {
@@ -62,20 +52,17 @@
 }
 
 .inbox-icon {
-    /* background-image: url('path_to_inbox_icon.svg'); */
-    /* Add a fallback style if needed, e.g.: */
+
     background-color: #f0f0f0;
 }
 
 .now-icon {
-    /* background-image: url('path_to_now_icon.svg'); */
-    /* Add a fallback style if needed, e.g.: */
+
     background-color: #e0e0e0;
 }
 
 .plan-icon {
-    /* background-image: url('path_to_plan_icon.svg'); */
-    /* Add a fallback style if needed, e.g.: */
+
     background-color: #d0d0d0;
 }
 
@@ -89,4 +76,4 @@
 
 .intui-task-sidebar.collapsed .intui-task-sidebar-icon {
     margin-right: 0;
-}
+} */

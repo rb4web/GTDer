@@ -1,0 +1,15 @@
+
+
+.intui-sectionlist {
+    list-style-type: none;
+}
+
+.intui-section {
+    margin-bottom: 10px;
+}
+
+.intui-task-item {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}

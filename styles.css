@@ -1,6 +1,6 @@
 /*
 
-This CSS file will be included with your plugin, and
+This ./style.CSS file will be included with your plugin, and
 available in the app when your plugin is enabled.
 
 If your plugin does not need CSS, delete this file.
@@ -269,14 +269,6 @@ li.intui-inbox-item {
     height: 100%;
 }
 
-.intui-sidebar {
-    position: relative;
-    width: 200px;
-    background-color: var(--background-secondary);
-    transition: width 0.3s ease;
-    overflow: hidden;
-    border-right: 1px solid var(--background-modifier-border);
-}
 
 .intui-sidebar.collapsed {
     width: 40px;
@@ -297,19 +289,7 @@ li.intui-inbox-item {
     margin-left: 0;
 }
 
-.intui-sidebar-toggle {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: block;
-    /*font-size: 15px;
-    width: auto; /* This will make the button fit its content 
-    padding: 5px 10px; / Adjust padding as needed */
-}
+
 
 .intui-sidebar-buttons {
     display: flex;
@@ -373,11 +353,7 @@ li.intui-inbox-item {
     margin-right: 0;
 }
 
-.intui-main-container {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 20px;
-}
+
 
 .intui-calendar-container,
 .intui-now-container,
@@ -393,26 +369,15 @@ button.intui-inbox-action {
     float: right;
 }
 
-/* Add these styles if they're not already present */
-
-.intui-sidebar {
-    width: 200px; /* Adjust as needed */
-    transition: width 0.3s ease;
-}
-
-.intui-sidebar.collapsed {
-    width: 50px; /* Adjust as needed */
-}
-
 .intui-main-container {
     flex-grow: 1;
-    margin-left: 200px; /* Should match the sidebar width */
-    transition: margin-left 0.3s ease;
+    overflow-y: auto;
+    padding: 20px;
 }
 
-.intui-main-container.expanded {
+/* .intui-main-container.expanded {
     margin-left: 50px; /* Should match the collapsed sidebar width */
-}
+} */
 
 
 
@@ -425,19 +390,6 @@ button.intui-inbox-action {
     margin-right: 0;
 }
 
-.intui-sidebar {
-    width: 200px;
-    transition: width 0.3s ease;
-    position: fixed; /* This ensures the sidebar stays in place */
-    height: 100%; /* Full height */
-    left: 0;
-    top: 0;
-    overflow-y: auto; /* In case content overflows */
-}
-
-.intui-sidebar.collapsed {
-    width: 50px;
-}
 
 /* Ensure the content doesn't overlap with the sidebar */
 .intui-task-content {
@@ -445,3 +397,15 @@ button.intui-inbox-action {
     height: 100%;
 }
 
+.intui-sidebar {
+    width: 200px;
+    transition: width 0.3s ease;
+    position: relative; /* This ensures the sidebar stays in place */
+    height: 100%; /* Full height */
+    left: 0;
+    top: 0;
+    overflow-y: auto; /* In case content overflows */
+    background-color: var(--background-secondary);
+    overflow: hidden;
+    border-right: 1px solid var(--background-modifier-border);
+}
