@@ -1,6 +1,7 @@
 import { App, Plugin, PluginSettingTab, Setting, WorkspaceLeaf, TFile } from 'obsidian';
 import { IntuiTaskView } from './src/IntuiTaskView';
 import './styles.css';
+import './src/styles/components/sidebar.css';
 import { IntuiTaskPluginSettings } from './src/types/types';
 
 // Remember to rename these classes and interfaces!

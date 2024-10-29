@@ -1,0 +1,92 @@
+.intui-task-sidebar {
+    position: relative;
+    width: 200px;
+    background-color: var(--background-secondary);
+    transition: width 0.3s ease;
+    overflow: hidden;
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+.intui-task-sidebar.collapsed {
+    width: 40px;
+}
+
+.intui-task-sidebar.collapsed .intui-task-sidebar-buttons {
+    display: none;
+}
+
+.intui-task-sidebar-toggle {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--text-normal);
+    cursor: pointer;
+    font-size: 18px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.intui-task-sidebar-buttons {
+    display: flex;
+    flex-direction: column;
+    padding-top: 40px;
+}
+
+.intui-task-sidebar-button {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--text-normal);
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+}
+
+.intui-task-sidebar-button:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.intui-task-sidebar-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inbox-icon {
+    /* background-image: url('path_to_inbox_icon.svg'); */
+    /* Add a fallback style if needed, e.g.: */
+    background-color: #f0f0f0;
+}
+
+.now-icon {
+    /* background-image: url('path_to_now_icon.svg'); */
+    /* Add a fallback style if needed, e.g.: */
+    background-color: #e0e0e0;
+}
+
+.plan-icon {
+    /* background-image: url('path_to_plan_icon.svg'); */
+    /* Add a fallback style if needed, e.g.: */
+    background-color: #d0d0d0;
+}
+
+.intui-task-sidebar-text {
+    font-size: 14px;
+}
+
+.intui-task-sidebar.collapsed .intui-task-sidebar-text {
+    display: none;
+}
+
+.intui-task-sidebar.collapsed .intui-task-sidebar-icon {
+    margin-right: 0;
+}
