@@ -147,8 +147,9 @@ export class InboxView {
         
         // Read and render tasks
            // Create task list container
-        const taskList = this.container.createEl('ul', { cls: 'intui-inbox-list' });
-
+        const sectionList = this.container.createEl('ul', { cls: 'intui-inbox-sectionlist' });
+        const sectionListItems = sectionList.createEl('li', { cls: 'intui-inbox-section' });
+sectionListItems
         // Render each task
         tasks.forEach((task: STask, index: number) => {
             const taskItem = taskList.createEl('li', { cls: 'intui-task-inbox-item' });
