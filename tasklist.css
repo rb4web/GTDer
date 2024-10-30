@@ -1,0 +1,95 @@
+/* Task Container & Items */
+.task-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .task-item {
+    margin: 2px 0;
+    padding-left: calc(24px * var(--item-indent, 1));
+    border-bottom: 1px solid var(--reactist-divider-secondary);
+    position: relative;
+  }
+  
+  /* Task Header */
+  .task-header {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 8px 0;
+  }
+  
+  /* Checkbox */
+  .task-checkbox {
+    margin: 8px 6px 0 -3px;
+    z-index: 1;
+    flex-shrink: 0;
+    position: relative;
+    width: 28px;
+  }
+  
+  /* Task Content */
+  .task-content {
+    flex: 1;
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+  
+  /* Task Info */
+  .task-info {
+    align-items: center;
+    display: flex;
+    padding-top: 8px;
+    position: relative;
+  }
+  
+  .task-info:empty {
+    display: none;
+  }
+  
+  /* Task Actions */
+  .task-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    position: absolute;
+    right: 0;
+    top: 7px;
+  }
+  
+  .task-actions button {
+    align-items: center;
+    border-radius: 3px;
+    color: #808080;
+    cursor: pointer;
+    display: flex;
+    height: 24px;
+    justify-content: center;
+    margin-left: var(--reactist-spacing-small);
+    width: 24px;
+    opacity: 0;
+  }
+  
+  .task-actions button:not(:disabled):hover {
+    background-color: #eee;
+    color: #202020;
+  }
+  
+  /* Show actions on hover */
+  .task-item:hover .task-actions button {
+    opacity: 1;
+  }
+  
+  /* Dark Theme */
+  .theme_dark .task-item {
+    border-color: var(--product-library-divider-primary);
+  }
+  
+  .theme_dark .task-actions button:not(:disabled):hover {
+    background-color: #4d4d4d;
+    color: var(--product-library-actionable-quaternary-on-hover-tint);
+  }

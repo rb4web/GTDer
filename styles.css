@@ -344,3 +344,145 @@ If your plugin does not need CSS, delete this file.
 .intui-inbox-item-action:hover {
     background-color: var(--background-modifier-hover);
 }
+
+/* Task List Container */
+.intui-inbox-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Task Item */
+.intui-inbox-item {
+    display: flex;
+    position: relative;
+    padding: 8px 24px 8px calc(24px * var(--item-indent, 1));
+    margin: 1px 0;
+    border-radius: 4px;
+}
+
+.intui-inbox-item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+/* Task Body */
+.intui-inbox-item-body {
+    display: flex;
+    flex: 1;
+    min-height: 24px;
+    width: 500px;
+    position: relative;
+}
+
+/* Main Content Area */
+.intui-inbox-item-main {
+    display: flex;
+    align-items: flex-start;
+    flex: 1;
+}
+
+/* Left Actions (Drag Handle) */
+.intui-inbox-item-actions-left {
+    display: flex;
+    opacity: 0;
+    margin-right: 4px;
+}
+
+.intui-inbox-item:hover .intui-inbox-item-actions-left {
+    opacity: 1;
+}
+
+.intui-inbox-item-drag {
+    cursor: move;
+    color: var(--text-muted);
+    padding: 4px;
+}
+
+/* Checkbox */
+.intui-inbox-item-checkbox {
+    margin: 4px 8px;
+    cursor: pointer;
+}
+
+/* Content Area */
+.intui-inbox-item-content {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 0;
+}
+
+.intui-inbox-item-text {
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Metadata */
+.intui-inbox-item-metadata {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.intui-inbox-item-due {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.intui-inbox-item-tag {
+    padding: 2px 6px;
+    border-radius: 3px;
+    background-color: var(--background-modifier-hover);
+    color: var(--text-muted);
+}
+
+/* Actions Container */
+.intui-inbox-item-actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    background: linear-gradient(to right, transparent, var(--background-primary) 20px);
+    padding-left: 20px;
+}
+
+.intui-inbox-item:hover .intui-inbox-item-actions {
+    opacity: 1;
+}
+
+/* Action Buttons */
+.intui-inbox-item-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.intui-inbox-item-action:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+/* Dark Theme Adjustments */
+.theme-dark .intui-inbox-item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.theme-dark .intui-inbox-item-action:hover {
+    background-color: var(--background-modifier-hover);
+}

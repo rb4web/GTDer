@@ -233,86 +233,102 @@ export class InboxView {
     }
     private async renderInboxTasks(tasks) {
         try {
-            // ... existing checks ...
-
             // Create task list container
             const taskList = this.container.createEl('ul', { cls: 'intui-inbox-list' });
 
-            tasks.forEach((task: STask, index: number) => {
-                // Create list item
-                const listItem = taskList.createEl('li', { 
+            tasks.forEach((task: STask) => {
+                // Create task item
+                const taskItem = taskList.createEl('li', {
                     cls: 'intui-inbox-item',
                     attr: {
-                        'data-item-indent': task.indent || 1,
-                        'aria-selected': 'false'
+                        'data-id': task.id,
+                        'style': `--item-indent: ${task.indent || 1}`
                     }
                 });
 
                 // Create task body container
-                const taskBody = listItem.createEl('div', { 
-                    cls: 'intui-inbox-item-body',
-                    attr: { role: 'button', tabindex: '0' }
+                const taskBody = taskItem.createEl('div', { cls: 'intui-inbox-item-body' });
+
+                // Create main content area
+                const taskMain = taskBody.createEl('div', { cls: 'intui-inbox-item-main' });
+
+                // Add left actions (drag handle)
+                const leftActions = taskMain.createEl('div', { cls: 'intui-inbox-item-actions-left' });
+                const dragHandle = leftActions.createEl('button', {
+                    cls: 'intui-inbox-item-drag',
+                    attr: { 'aria-label': 'Drag to reorder' }
                 });
-
-                // Create main content wrapper
-                const mainContent = taskBody.createEl('div', { cls: 'intui-inbox-item-main' });
-
-                // Add drag handle and collapse button container
-                const actionsLeft = mainContent.createEl('div', { cls: 'intui-inbox-item-actions-left' });
-                
-                // Add drag handle
-                const dragHandle = actionsLeft.createEl('span', { cls: 'intui-inbox-item-drag' });
-                dragHandle.innerHTML = `<svg width="24" height="24"><path fill="currentColor" d="M14.5 15.5a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 14.5 15.5zm-5 0a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 9.5 15.5zm5-5a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 14.5 10.5zm-5 0a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 9.5 10.5zm5-5a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 14.5 5.5zm-5 0a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 9.5 5.5z"></path></svg>`;
+                dragHandle.innerHTML = '⋮⋮'; // Drag handle icon
 
                 // Add checkbox
-                const checkbox = mainContent.createEl('input', {
-                    type: 'checkbox',
+                const checkbox = taskMain.createEl('button', {
                     cls: 'intui-inbox-item-checkbox',
                     attr: {
-                        role: 'checkbox',
+                        'role': 'checkbox',
                         'aria-checked': task.completed ? 'true' : 'false'
                     }
                 });
-                checkbox.checked = task.completed;
 
-                // Create content container
-                const contentWrapper = mainContent.createEl('div', { cls: 'intui-inbox-item-content' });
-                const content = contentWrapper.createEl('div', { cls: 'intui-inbox-item-text' });
-                content.createSpan({ text: task.description });
-
-                // Create metadata container
-                const metadata = contentWrapper.createEl('div', { cls: 'intui-inbox-item-metadata' });
+                // Add content area
+                const content = taskMain.createEl('div', { cls: 'intui-inbox-item-content' });
                 
-                // Add due date if exists
-                if (task.due) {
-                    const dueDate = metadata.createEl('span', { cls: 'intui-inbox-item-due' });
-                    dueDate.innerHTML = `<svg width="12" height="12">...</svg>${task.due}`;
-                }
-
-                // Add tags if exist
-                if (task.tags?.length) {
-                    task.tags.forEach(tag => {
-                        metadata.createEl('span', { 
-                            cls: 'intui-inbox-item-tag',
-                            text: tag
-                        });
-                    });
-                }
-
-                // Create actions container
-                const actions = taskBody.createEl('div', { cls: 'intui-inbox-item-actions' });
-                
-                // Add action buttons
-                const editButton = actions.createEl('button', { 
-                    cls: 'intui-inbox-item-action',
-                    attr: { 'aria-label': 'Edit' }
+                // Add task text
+                content.createEl('div', {
+                    cls: 'intui-inbox-item-text',
+                    text: task.description
                 });
-                editButton.innerHTML = `<svg width="24" height="24">...</svg>`;
-                
-                // Add more action buttons as needed...
+
+                // Add metadata if exists
+                if (task.due || task.subtasks || task.tags) {
+                    const metadata = content.createEl('div', { cls: 'intui-inbox-item-metadata' });
+
+                    // Add subtask status if exists
+                    if (task.subtasks) {
+                        metadata.createEl('span', {
+                            text: `${task.subtasks.completed}/${task.subtasks.total} subtasks`
+                        });
+                    }
+
+                    // Add due date if exists
+                    if (task.due) {
+                        const dueDate = metadata.createEl('span', { cls: 'intui-inbox-item-due' });
+                        dueDate.innerHTML = '📅 ' + task.due;
+                    }
+
+                    // Add tags if exist
+                    if (task.tags?.length) {
+                        task.tags.forEach(tag => {
+                            metadata.createEl('span', {
+                                cls: 'intui-inbox-item-tag',
+                                text: tag
+                            });
+                        });
+                    }
+                }
+
+                // Add actions container
+                const actions = taskBody.createEl('div', { cls: 'intui-inbox-item-actions' });
+
+                // Add action buttons
+                const actionButtons = [
+                    { label: 'Edit', icon: '✏️' },
+                    { label: 'Due date', icon: '📅' },
+                    { label: 'Comment', icon: '💬' },
+                    { label: 'More actions', icon: '⋮' }
+                ];
+
+                actionButtons.forEach(({ label, icon }) => {
+                    const button = actions.createEl('button', {
+                        cls: 'intui-inbox-item-action',
+                        attr: { 'aria-label': label }
+                    });
+                    button.textContent = icon;
+                });
 
                 // Add event listeners
-                checkbox.addEventListener('change', async () => {
+                checkbox.addEventListener('click', async () => {
+                    const newState = checkbox.getAttribute('aria-checked') !== 'true';
+                    checkbox.setAttribute('aria-checked', String(newState));
                     await this.updateTaskCompletion(task);
                 });
             });
