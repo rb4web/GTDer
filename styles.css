@@ -247,3 +247,100 @@ If your plugin does not need CSS, delete this file.
 .intui-task-menu-toggle-container {
     margin-left: 10px;
 }
+
+/* Task List Styles */
+.intui-inbox-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.intui-inbox-item {
+    margin: 2px 0;
+    padding-left: calc(24px * var(--item-indent, 1));
+}
+
+.intui-inbox-item-body {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.intui-inbox-item-body:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.intui-inbox-item-main {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+}
+
+.intui-inbox-item-actions-left {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.intui-inbox-item:hover .intui-inbox-item-actions-left {
+    opacity: 1;
+}
+
+.intui-inbox-item-drag {
+    cursor: grab;
+    color: var(--text-muted);
+}
+
+.intui-inbox-item-checkbox {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--text-muted);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.intui-inbox-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.intui-inbox-item-text {
+    margin-bottom: 4px;
+}
+
+.intui-inbox-item-metadata {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.intui-inbox-item-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.intui-inbox-item:hover .intui-inbox-item-actions {
+    opacity: 1;
+}
+
+.intui-inbox-item-action {
+    padding: 4px;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.intui-inbox-item-action:hover {
+    background-color: var(--background-modifier-hover);
+}

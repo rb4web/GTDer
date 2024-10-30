@@ -145,31 +145,33 @@ export class InboxView {
             });
 
         
-        // Read and render tasks
-           // Create task list container
-        const sectionList = this.container.createEl('ul', { cls: 'intui-inbox-sectionlist' });
-        const sectionListItems = sectionList.createEl('li', { cls: 'intui-inbox-section' });
-sectionListItems
-        // Render each task
-        tasks.forEach((task: STask, index: number) => {
-            const taskItem = taskList.createEl('li', { cls: 'intui-task-inbox-item' });
-            
-            // Create checkbox
-            const checkbox = taskItem.createEl('input', {
-                type: 'checkbox',
-                cls: 'task-checkbox'
-            });
-            checkbox.checked = task.completed;
-            
-            // Add task description 
-            taskItem.createSpan({ text: task.description || '' });
+        // // Read and render tasks
+        //    // Create task list container
+        // const sectionList = this.container.createEl('ul', { cls: 'intui-inbox-sectionlist' });
+        // const sectionListItems = sectionList.createEl('li', { cls: 'intui-inbox-section' });
 
-            // Add event listeners
-            checkbox.addEventListener('change', async () => {
-                // Pass the full task object for more context when updating
-                await this.updateTaskCompletion(task);
-            });
-        });
+        // // Render each task
+        // tasks.forEach((task: STask, index: number) => {
+        //     const taskItem = sectionListItems.createEl('li', { cls: 'intui-task-inbox-item' });
+            
+        //     // Create checkbox
+        //     const checkbox = taskItem.createEl('input', {
+        //         type: 'checkbox',
+        //         cls: 'task-checkbox'
+        //     });
+        //     checkbox.checked = task.completed;
+            
+        //     // Add task description 
+        //     taskItem.createSpan({ text: task.description || '' });
+
+        //     // Add event listeners
+        //     checkbox.addEventListener('change', async () => {
+        //         // Pass the full task object for more context when updating
+        //         await this.updateTaskCompletion(task);
+        //     });
+        // });
+
+        await this.renderInboxTasks(tasks);
 
         // Add "Add Task" button
         const addTaskButton = this.container.createEl('button', {
@@ -229,4 +231,98 @@ sectionListItems
             menu.showAtPosition({ x: rect.right, y: rect.bottom });
         });
     }
+    private async renderInboxTasks(tasks) {
+        try {
+            // ... existing checks ...
+
+            // Create task list container
+            const taskList = this.container.createEl('ul', { cls: 'intui-inbox-list' });
+
+            tasks.forEach((task: STask, index: number) => {
+                // Create list item
+                const listItem = taskList.createEl('li', { 
+                    cls: 'intui-inbox-item',
+                    attr: {
+                        'data-item-indent': task.indent || 1,
+                        'aria-selected': 'false'
+                    }
+                });
+
+                // Create task body container
+                const taskBody = listItem.createEl('div', { 
+                    cls: 'intui-inbox-item-body',
+                    attr: { role: 'button', tabindex: '0' }
+                });
+
+                // Create main content wrapper
+                const mainContent = taskBody.createEl('div', { cls: 'intui-inbox-item-main' });
+
+                // Add drag handle and collapse button container
+                const actionsLeft = mainContent.createEl('div', { cls: 'intui-inbox-item-actions-left' });
+                
+                // Add drag handle
+                const dragHandle = actionsLeft.createEl('span', { cls: 'intui-inbox-item-drag' });
+                dragHandle.innerHTML = `<svg width="24" height="24"><path fill="currentColor" d="M14.5 15.5a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 14.5 15.5zm-5 0a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 9.5 15.5zm5-5a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 14.5 10.5zm-5 0a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 9.5 10.5zm5-5a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 14.5 5.5zm-5 0a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 9.5 5.5z"></path></svg>`;
+
+                // Add checkbox
+                const checkbox = mainContent.createEl('input', {
+                    type: 'checkbox',
+                    cls: 'intui-inbox-item-checkbox',
+                    attr: {
+                        role: 'checkbox',
+                        'aria-checked': task.completed ? 'true' : 'false'
+                    }
+                });
+                checkbox.checked = task.completed;
+
+                // Create content container
+                const contentWrapper = mainContent.createEl('div', { cls: 'intui-inbox-item-content' });
+                const content = contentWrapper.createEl('div', { cls: 'intui-inbox-item-text' });
+                content.createSpan({ text: task.description });
+
+                // Create metadata container
+                const metadata = contentWrapper.createEl('div', { cls: 'intui-inbox-item-metadata' });
+                
+                // Add due date if exists
+                if (task.due) {
+                    const dueDate = metadata.createEl('span', { cls: 'intui-inbox-item-due' });
+                    dueDate.innerHTML = `<svg width="12" height="12">...</svg>${task.due}`;
+                }
+
+                // Add tags if exist
+                if (task.tags?.length) {
+                    task.tags.forEach(tag => {
+                        metadata.createEl('span', { 
+                            cls: 'intui-inbox-item-tag',
+                            text: tag
+                        });
+                    });
+                }
+
+                // Create actions container
+                const actions = taskBody.createEl('div', { cls: 'intui-inbox-item-actions' });
+                
+                // Add action buttons
+                const editButton = actions.createEl('button', { 
+                    cls: 'intui-inbox-item-action',
+                    attr: { 'aria-label': 'Edit' }
+                });
+                editButton.innerHTML = `<svg width="24" height="24">...</svg>`;
+                
+                // Add more action buttons as needed...
+
+                // Add event listeners
+                checkbox.addEventListener('change', async () => {
+                    await this.updateTaskCompletion(task);
+                });
+            });
+
+        } catch (error) {
+            console.error('Error rendering tasks:', error);
+            new Notice('Error rendering tasks');
+        }
+    }
+
+
+    
 }
